@@ -3,6 +3,7 @@ package no.hvl.dat152.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,9 +14,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import no.hvl.dat152.model.Item;
 import no.hvl.dat152.repositories.ItemDAOMemorySingleton;
+import no.hvl.dat152.service.ItemService;
 
 @Controller
 public class ItemController{
+
+    @Autowired
+    private ItemService itemService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
     public String viewShoppingDefault() {
@@ -25,7 +30,7 @@ public class ItemController{
 	@RequestMapping(value = "/viewitems", method = RequestMethod.GET)
     public String viewShoppingList(Model model) {
 		
-		final List<Item> items = ItemDAOMemorySingleton.getInstance().findAllItems();
+		final List<Item> items = itemService.getAll();
 		model.addAttribute("items", items);
 		
 		return "shoppinglist";
@@ -35,7 +40,7 @@ public class ItemController{
 	@RequestMapping(value = "/viewitem/{id}", method = RequestMethod.GET)
     protected String viewItem(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
 
-        final Item item = ItemDAOMemorySingleton.getInstance().findItem(id);
+        final Item item = itemService.getById(id).get();
         
         if(item == null){
             redirectAttributes.addFlashAttribute("errormsg", "Error EQUISDE");
@@ -62,7 +67,7 @@ public class ItemController{
     		                    Model model) {
 
 		final Item newItem = new Item(id, name, price, description);
-		ItemDAOMemorySingleton.getInstance().createItem(newItem); 
+		itemService.save(newItem); 
         
         return "redirect:viewitems";
     }
