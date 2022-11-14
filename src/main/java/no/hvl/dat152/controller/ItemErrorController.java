@@ -13,6 +13,6 @@ public class ItemErrorController implements ErrorController {
 
         String msg = "An error occurred. Please try again.";
         redirectAttrs.addFlashAttribute("errormsg", msg);
-        return "redirects:/viewitems";
+        return "redirect:viewitems";
     }
 }

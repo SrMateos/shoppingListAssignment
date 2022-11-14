@@ -14,7 +14,7 @@ import no.hvl.dat152.model.Item;;
 @Service
 public class ItemService {
     
-    private String BASE_URL = "http://localhost:8299/items";
+    private String BASE_URL = "http://localhost:8299/items/";
 
     @Autowired
     private RestTemplate template;
@@ -33,10 +33,7 @@ public class ItemService {
         return Optional.of(template.postForObject(BASE_URL, request, Item.class));
     }
 
-    public Optional<Item> Delete(String id){
-        HttpEntity<Item> request = new HttpEntity<>(id);
-        return Optional.of(template.postForObject(BASE_URL, request, Item.class));
+    public void delete(String id){
+        template.delete(BASE_URL + id);
     }
-
-
 }

@@ -44,7 +44,7 @@ public class ItemController{
         
         if(item == null){
             redirectAttributes.addFlashAttribute("errormsg", "Error EQUISDE");
-            return "redirect:/viewitems";
+            return "redirect:viewitems";
         }
         
         model.addAttribute("item", item);
@@ -74,8 +74,7 @@ public class ItemController{
 
     @RequestMapping(value = "/deleteitem/{id}", method = RequestMethod.GET)
     protected String deleteItem(@PathVariable String id, Model model) {
-        Optional<Item> item = Optional.of(ItemDAOMemorySingleton.getInstance().findItem(id));
-
+        Optional<Item> item = itemService.getById(id);
         model.addAttribute(item.get());
 
         return "deleteitem";
@@ -83,17 +82,16 @@ public class ItemController{
 
     @RequestMapping(value = "/deleteitemsave/{id}", method = RequestMethod.GET)
     protected String deleteItemSave(@PathVariable String id, Model model) {
-        ItemDAOMemorySingleton.getInstance().deleteItem(id);
-
+        itemService.delete(id);
         return "redirect:/viewitems";
     }
 
     @RequestMapping(value = "/updateitem/{id}", method = RequestMethod.GET)
     protected String updateItem(@PathVariable String id, Model model) {
-        Optional<Item> item = Optional.of(ItemDAOMemorySingleton.getInstance().findItem(id));
+        Optional<Item> item = itemService.getById(id);
 
         if (item.isEmpty()) {
-            return "redirect:/viewitems";
+            return "redirect:viewitems";
         }
 
         model.addAttribute(item.get());
