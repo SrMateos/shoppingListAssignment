@@ -31,6 +31,9 @@
 						<td>
 							<a th:href="@{deleteitem/{id}(id=${item.id})}" th:text="#{label.delete}" />
 						</td>
+						<td>
+							<a th:href="@{updateitem/{id}(id=${item.id})}" th:text="#{label.update}" />
+						</td>
 					</tr>
 				</table>
 		</div>

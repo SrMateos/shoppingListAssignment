@@ -13,7 +13,7 @@ public class Item implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    private Long id;
     private String name;
     private Double price;
     private String description;
@@ -29,7 +29,7 @@ public class Item implements Serializable {
      *
      * @param id the id
      */
-    public Item(final String id) {
+    public Item(final Long id) {
         this.id = id;
     }
 
@@ -41,8 +41,21 @@ public class Item implements Serializable {
      * @param price the price
      * @param description the description
      */
-    public Item(final String id, final String name, final Double price, final String description) {
+    public Item(final Long id, final String name, final Double price, final String description) {
         this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
+
+    /**
+     * Constructs a new Item.
+     *
+     * @param name the name
+     * @param price the price
+     * @param description the description
+     */
+    public Item(final String name, final Double price, final String description) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -53,7 +66,7 @@ public class Item implements Serializable {
      *
      * @return the id
      */
-    public final String getId() {
+    public final Long getId() {
         return id;
     }
 
@@ -62,7 +75,7 @@ public class Item implements Serializable {
      *
      * @param id the id to set
      */
-    public final void setId(final String id) {
+    public final void setId(final Long id) {
         this.id = id;
     }
 

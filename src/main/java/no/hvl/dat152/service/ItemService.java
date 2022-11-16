@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -24,7 +25,7 @@ public class ItemService {
         return Arrays.asList(response.getBody());
     }
 
-    public Optional<Item> getById(String id){
+    public Optional<Item> getById(Long id){
         return Optional.of(template.getForObject(BASE_URL+id, Item.class));
     }
 
@@ -33,7 +34,13 @@ public class ItemService {
         return Optional.of(template.postForObject(BASE_URL, request, Item.class));
     }
 
-    public void delete(String id){
+    public void delete(Long id){
         template.delete(BASE_URL + id);
     }
+
+    public void update(Long id, Item item){
+        HttpEntity<Item> request = new HttpEntity<>(item);
+        template.exchange(BASE_URL + id, HttpMethod.PUT, request, Void.class);
+    }
+
 }

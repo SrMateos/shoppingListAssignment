@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import no.hvl.dat152.model.Item;
-import no.hvl.dat152.repositories.ItemDAOMemorySingleton;
 import no.hvl.dat152.service.ItemService;
 
 @Controller
@@ -38,13 +37,13 @@ public class ItemController{
     }
     
 	@RequestMapping(value = "/viewitem/{id}", method = RequestMethod.GET)
-    protected String viewItem(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+    protected String viewItem(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
 
         final Item item = itemService.getById(id).get();
         
         if(item == null){
-            redirectAttributes.addFlashAttribute("errormsg", "Error EQUISDE");
-            return "redirect:viewitems";
+            redirectAttributes.addFlashAttribute("errormsg", "Error, item not found");
+            return "redirect:/viewitems";
         }
         
         model.addAttribute("item", item);
@@ -53,27 +52,23 @@ public class ItemController{
     }
 	
 	@RequestMapping(value = "/createitem", method = RequestMethod.GET)
-    protected String createItem(Model model) {
+    protected String createItem() {
 
-        final String id = ItemDAOMemorySingleton.getInstance().getNextId();
-        model.addAttribute("id",id);
-        
         return "createitem";
     }
 	
 	@RequestMapping(value = "/createitem", method = RequestMethod.POST)
-    protected String createItem(@RequestParam String id, @RequestParam String name, 
-    		                    @RequestParam Double price, @RequestParam String description, 
-    		                    Model model) {
+    protected String createItem(@RequestParam String name,
+    		                    @RequestParam Double price, @RequestParam String description) {
 
-		final Item newItem = new Item(id, name, price, description);
+		final Item newItem = new Item(name, price, description);
 		itemService.save(newItem); 
         
         return "redirect:viewitems";
     }
 
     @RequestMapping(value = "/deleteitem/{id}", method = RequestMethod.GET)
-    protected String deleteItem(@PathVariable String id, Model model) {
+    protected String deleteItem(@PathVariable Long id, Model model) {
         Optional<Item> item = itemService.getById(id);
         model.addAttribute(item.get());
 
@@ -81,22 +76,35 @@ public class ItemController{
     }
 
     @RequestMapping(value = "/deleteitemsave/{id}", method = RequestMethod.GET)
-    protected String deleteItemSave(@PathVariable String id, Model model) {
+    protected String deleteItemSave(@PathVariable Long id, Model model) {
         itemService.delete(id);
         return "redirect:/viewitems";
     }
 
     @RequestMapping(value = "/updateitem/{id}", method = RequestMethod.GET)
-    protected String updateItem(@PathVariable String id, Model model) {
+    protected String updateItem(@PathVariable Long id, Model model) {
+        model.addAttribute("item", itemService.getById(id).get());
+        return "updateitem";
+    }
+
+    @RequestMapping(value = "/updateitem/{id}", method = RequestMethod.POST)
+    protected String updateItem(@PathVariable Long id, Model model, @RequestParam String name,
+                                @RequestParam Double price, @RequestParam String description,
+                                RedirectAttributes redirectAttributes) {
         Optional<Item> item = itemService.getById(id);
 
-        if (item.isEmpty()) {
-            return "redirect:viewitems";
+        if (item == null) {
+            System.out.println("IM HERRRRRRRRREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+            redirectAttributes.addFlashAttribute("errormsg", "Error, item not found");
+            return "redirect:/viewitems";
         }
 
-        model.addAttribute(item.get());
+        Item modifiedItem = new Item(id, name, price, description);
+        itemService.update(id, modifiedItem);
 
-        return "createitem";
+        model.addAttribute(modifiedItem);
+
+        return "redirect:/viewitems";
     }
 
 }
