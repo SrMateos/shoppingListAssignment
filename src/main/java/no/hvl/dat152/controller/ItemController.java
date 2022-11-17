@@ -59,8 +59,13 @@ public class ItemController{
 	
 	@RequestMapping(value = "/createitem", method = RequestMethod.POST)
     protected String createItem(@RequestParam String name,
-    		                    @RequestParam Double price, @RequestParam String description) {
-        
+    		                    @RequestParam Double price, @RequestParam String description,
+                                RedirectAttributes redirectAttributes) {
+
+        if (name.equals("") || description.equals("")){
+            redirectAttributes.addFlashAttribute("errormsg", "Error, you must fill all the fields of the item");
+            return "redirect:/viewitems";
+        }
 		final Item newItem = new Item(name, price, description);
 		itemService.save(newItem); 
         
@@ -97,6 +102,7 @@ public class ItemController{
             return "redirect:/viewitems";
         }
 
+
         model.addAttribute("item", item);
 
         return "updateitem";
@@ -104,8 +110,15 @@ public class ItemController{
 
     @RequestMapping(value = "/updateitem/{id}", method = RequestMethod.POST)
     protected String updateItem(@PathVariable Long id, Model model, @RequestParam String name,
-                                @RequestParam Double price, @RequestParam String description) {
-
+                                @RequestParam Double price, @RequestParam String description,
+                                RedirectAttributes redirectAttributes) {
+        System.out.println("----------------------------------------------");
+        System.out.println(price);
+        System.out.println("----------------------------------------------");
+        if (name.equals("") || description.equals("")){
+            redirectAttributes.addFlashAttribute("errormsg", "Error, you must fill all the fields of the item");
+            return "redirect:/viewitems";
+        }
         Item modifiedItem = new Item(id, name, price, description);
         itemService.update(id, modifiedItem);
 
