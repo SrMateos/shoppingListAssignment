@@ -153,4 +153,13 @@ public class Item implements Serializable {
         return this.id.equals(other.id);
     }
 
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

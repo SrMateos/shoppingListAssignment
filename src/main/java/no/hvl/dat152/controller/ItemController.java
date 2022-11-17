@@ -39,8 +39,8 @@ public class ItemController{
 	@RequestMapping(value = "/viewitem/{id}", method = RequestMethod.GET)
     protected String viewItem(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
 
-        final Item item = itemService.getById(id).get();
-        
+        final Item item = itemService.getById(id);
+
         if(item == null){
             redirectAttributes.addFlashAttribute("errormsg", "Error, item not found");
             return "redirect:/viewitems";
@@ -60,7 +60,7 @@ public class ItemController{
 	@RequestMapping(value = "/createitem", method = RequestMethod.POST)
     protected String createItem(@RequestParam String name,
     		                    @RequestParam Double price, @RequestParam String description) {
-
+        
 		final Item newItem = new Item(name, price, description);
 		itemService.save(newItem); 
         
@@ -68,9 +68,15 @@ public class ItemController{
     }
 
     @RequestMapping(value = "/deleteitem/{id}", method = RequestMethod.GET)
-    protected String deleteItem(@PathVariable Long id, Model model) {
-        Optional<Item> item = itemService.getById(id);
-        model.addAttribute(item.get());
+    protected String deleteItem(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        Item item = itemService.getById(id);
+
+        if(item == null){
+            redirectAttributes.addFlashAttribute("errormsg", "Error, item not found");
+            return "redirect:/viewitems";
+        }
+
+        model.addAttribute(item);
 
         return "deleteitem";
     }
@@ -82,22 +88,23 @@ public class ItemController{
     }
 
     @RequestMapping(value = "/updateitem/{id}", method = RequestMethod.GET)
-    protected String updateItem(@PathVariable Long id, Model model) {
-        model.addAttribute("item", itemService.getById(id).get());
+    protected String updateItem(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+
+        Item item = itemService.getById(id);
+
+        if(item == null){
+            redirectAttributes.addFlashAttribute("errormsg", "Error, item not found");
+            return "redirect:/viewitems";
+        }
+
+        model.addAttribute("item", item);
+
         return "updateitem";
     }
 
     @RequestMapping(value = "/updateitem/{id}", method = RequestMethod.POST)
     protected String updateItem(@PathVariable Long id, Model model, @RequestParam String name,
-                                @RequestParam Double price, @RequestParam String description,
-                                RedirectAttributes redirectAttributes) {
-        Optional<Item> item = itemService.getById(id);
-
-        if (item == null) {
-            System.out.println("IM HERRRRRRRRREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-            redirectAttributes.addFlashAttribute("errormsg", "Error, item not found");
-            return "redirect:/viewitems";
-        }
+                                @RequestParam Double price, @RequestParam String description) {
 
         Item modifiedItem = new Item(id, name, price, description);
         itemService.update(id, modifiedItem);

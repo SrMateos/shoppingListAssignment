@@ -25,13 +25,20 @@ public class ItemService {
         return Arrays.asList(response.getBody());
     }
 
-    public Optional<Item> getById(Long id){
-        return Optional.of(template.getForObject(BASE_URL+id, Item.class));
+    public Item getById(Long id){
+        Item item;
+        try {
+            item = template.getForObject(BASE_URL + id, Item.class);
+        }
+        catch(Exception e){
+            return null;
+        }
+        return item;
     }
 
-    public Optional<Item> save(Item item){
+    public Item save(Item item){
         HttpEntity<Item> request = new HttpEntity<>(item);
-        return Optional.of(template.postForObject(BASE_URL, request, Item.class));
+        return template.postForObject(BASE_URL, request, Item.class);
     }
 
     public void delete(Long id){
