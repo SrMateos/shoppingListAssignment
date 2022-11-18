@@ -11,7 +11,7 @@
                 <div th:replace="fragments/general.html :: menu"></div>
             </div>
 
-            <form th:action="@{/updateitem/{id}(id=${id})}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/updateitem/{id}(id=${id})}" method="post">
                 <div><input type="hidden" th:value="${id}" name="id" /></div>
                 <table>
                     <tr>

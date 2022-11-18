@@ -110,16 +110,14 @@ public class ItemController{
 
     @RequestMapping(value = "/updateitem/{id}", method = RequestMethod.POST)
     protected String updateItem(@PathVariable Long id, Model model, @RequestParam String name,
-                                @RequestParam Double price, @RequestParam String description,
+                                @RequestParam String price, @RequestParam String description,
                                 RedirectAttributes redirectAttributes) {
-        System.out.println("----------------------------------------------");
-        System.out.println(price);
-        System.out.println("----------------------------------------------");
-        if (name.equals("") || description.equals("")){
+
+        if (name.equals("") || description.equals("") || price.equals("")){
             redirectAttributes.addFlashAttribute("errormsg", "Error, you must fill all the fields of the item");
             return "redirect:/viewitems";
         }
-        Item modifiedItem = new Item(id, name, price, description);
+        Item modifiedItem = new Item(id, name, Double.parseDouble(price), description);
         itemService.update(id, modifiedItem);
 
         model.addAttribute(modifiedItem);
