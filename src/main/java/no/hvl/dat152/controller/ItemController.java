@@ -1,7 +1,6 @@
 package no.hvl.dat152.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,11 +62,13 @@ public class ItemController{
                                 RedirectAttributes redirectAttributes) {
 
         if (name.equals("") || description.equals("")){
-            redirectAttributes.addFlashAttribute("errormsg", "Error, you must fill all the fields of the item");
+            redirectAttributes.addFlashAttribute("errormsg", "Error, you must fill all the fields of the item.");
             return "redirect:/viewitems";
         }
 		final Item newItem = new Item(name, price, description);
-		itemService.save(newItem); 
+		if(itemService.save(newItem) == null) {
+            redirectAttributes.addFlashAttribute("errormsg", "Error, cannot create item.");
+        }
         
         return "redirect:viewitems";
     }
@@ -87,8 +88,10 @@ public class ItemController{
     }
 
     @RequestMapping(value = "/deleteitemsave/{id}", method = RequestMethod.GET)
-    protected String deleteItemSave(@PathVariable Long id, Model model) {
-        itemService.delete(id);
+    protected String deleteItemSave(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        if(!itemService.delete(id)) {
+            redirectAttributes.addFlashAttribute("errormsg", "Error, cannot delete item.");
+        }
         return "redirect:/viewitems";
     }
 
@@ -114,14 +117,15 @@ public class ItemController{
                                 RedirectAttributes redirectAttributes) {
 
         if (name.equals("") || description.equals("") || price.equals("")){
-            redirectAttributes.addFlashAttribute("errormsg", "Error, you must fill all the fields of the item");
+            redirectAttributes.addFlashAttribute("errormsg", "Error, you must fill all the fields of the item.");
             return "redirect:/viewitems";
         }
         Item modifiedItem = new Item(id, name, Double.parseDouble(price), description);
-        itemService.update(id, modifiedItem);
-
-        model.addAttribute(modifiedItem);
-
+        if(itemService.update(id, modifiedItem)) {
+            model.addAttribute(modifiedItem);
+        } else {
+            redirectAttributes.addFlashAttribute("errormsg", "Error, cannot update item.");
+        }
         return "redirect:/viewitems";
     }
 
